@@ -123,3 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // And pre-load a default map view (e.g., a generic city like London) if location permission is slow
     // initializeMap(51.505, -0.09); 
 });
+// A safe default location (e.g., coordinates for a major city)
+const defaultLat = 51.505; 
+const defaultLng = -0.09;
+
+// Initializes the map on load to prevent the blank white box
+initializeMap(defaultLat, defaultLng);
