@@ -2,14 +2,13 @@
 let map;
 let userMarker;
 let randomMarker;
-let routeLine; // New variable to hold the line connecting the two points
-const MAX_DISTANCE_KM = 2; // Set your max distance (2 kilometers)
+let routeLine; // Holds the line connecting the two points
+const MAX_DISTANCE_KM = 2; // Maximum distance for the random spot
 
 // --- Map Initialization Function ---
 function initializeMap(lat, lng) {
     const defaultZoom = 15;
     
-    // 1. Initialize the Leaflet map on the 'map' div
     if (!map) {
         map = L.map('map').setView([lat, lng], defaultZoom);
 
@@ -29,10 +28,12 @@ function initializeMap(lat, lng) {
     }
 }
 
-// --- Random Point Generation Function (The Core Logic) ---
+// --- Random Point Generation Function ---
 function generateRandomPoint(centerLat, centerLng, radius) {
-    const radiusInDegrees = radius / 111.32; // Approx. conversion of km to degrees near the equator
+    // Approx. conversion of km to degrees near the equator
+    const radiusInDegrees = radius / 111.32; 
 
+    // Generate random distance (w) and angle (t)
     const u = Math.random();
     const v = Math.random();
     const w = radiusInDegrees * Math.sqrt(u);
@@ -41,6 +42,7 @@ function generateRandomPoint(centerLat, centerLng, radius) {
     const x = w * Math.cos(t);
     const y = w * Math.sin(t);
 
+    // Calculate the new coordinates
     const newLat = centerLat + y;
     const newLng = centerLng + x / Math.cos(centerLat * Math.PI / 180);
 
@@ -61,34 +63,31 @@ function findRandomSpot() {
         (position) => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
-            const userLatLng = [userLat, userLng]; // Array for polyline
+            const userLatLng = [userLat, userLng]; 
 
             document.getElementById('status-message').textContent = `Location found. Generating random spot within ${MAX_DISTANCE_KM}km...`;
             
             initializeMap(userLat, userLng);
             
             const randomSpot = generateRandomPoint(userLat, userLng, MAX_DISTANCE_KM);
-            const randomLatLng = [randomSpot.lat, randomSpot.lng]; // Array for polyline
+            const randomLatLng = [randomSpot.lat, randomSpot.lng];
 
-            // --- 1. Update/Add Random Marker ---
+            // 1. Update/Add Random Marker
             if (randomMarker) {
                 map.removeLayer(randomMarker);
             }
             
-            // Add a new standard marker for the random spot
-            randomMarker = L.marker(randomLatLng).addTo(map) // Removed old custom icon
+            randomMarker = L.marker(randomLatLng).addTo(map)
             .bindPopup('Your Destination!').openPopup();
 
 
-            // --- 2. Draw the Route Line (Polyline) ---
+            // 2. Draw the Route Line (Polyline)
             if (routeLine) {
                 map.removeLayer(routeLine);
             }
             
-            // Define the coordinates for the line: from user to random spot
             const latlngs = [userLatLng, randomLatLng];
             
-            // Create and add the blue, dashed line to the map
             routeLine = L.polyline(latlngs, {
                 color: 'blue',
                 weight: 5,
@@ -101,7 +100,14 @@ function findRandomSpot() {
             const bounds = L.latLngBounds(userLatLng, randomLatLng);
             map.fitBounds(bounds, { padding: [50, 50] });
 
-            document.getElementById('status-message').innerHTML = `**Go here:** Lat: ${randomSpot.lat.toFixed(4)}, Lng: ${randomSpot.lng.toFixed(4)}`;
+            // 3. Clear Coordinate Display (THE GUARANTEE)
+            document.getElementById('status-message').innerHTML = `
+                <span style="font-size: 1.2em; color: #4CAF50; font-weight: bold;">DESTINATION FOUND!</span>
+                <br>
+                <strong style="color: #333;">Latitude:</strong> ${randomSpot.lat.toFixed(6)}
+                <br>
+                <strong style="color: #333;">Longitude:</strong> ${randomSpot.lng.toFixed(6)}
+            `;
         },
         (error) => {
             let errorMessage = "Error getting location. ";
@@ -126,8 +132,9 @@ function findRandomSpot() {
 // --- Event Listener ---
 document.getElementById('findSpotBtn').addEventListener('click', findRandomSpot);
 
-// --- Initial map setup (Fixes the blank map box) ---
-const defaultLat = 51.505; 
+// --- Initial map setup (Fixes the blank map box on load) ---
+const defaultLat = 51.505; // London
 const defaultLng = -0.09;
 
+// Initializes the map on load to prevent the blank white box
 initializeMap(defaultLat, defaultLng);
