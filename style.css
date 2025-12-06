@@ -4,26 +4,26 @@ body, html {
     font-family: sans-serif;
     background-color: #f0f0f0;
     color: #333;
-    /* Optional: Sets the background to a dark mode style for Randonautica vibe */
-    /* background-color: #121212; color: #e0e0e0; */
 }
 
 .container {
     padding: 20px;
-    max-width: 600px; /* Constrain width for desktop, but still mobile-first */
+    max-width: 600px;
     margin: 0 auto;
 }
 
 h1 {
     text-align: center;
-    color: #4CAF50; /* A friendly green */
+    color: #4CAF50;
     margin-bottom: 10px;
 }
 
 #status-message {
     text-align: center;
     margin-bottom: 15px;
-    font-style: italic;
+    padding: 10px; /* Added padding for better coordinate display */
+    border-radius: 5px;
+    background-color: #e0f2f1; /* Light background for visibility */
 }
 
 #findSpotBtn {
@@ -45,17 +45,16 @@ h1 {
     background-color: #45a049;
 }
 
-/* Make the map full-width and tall on mobile */
+/* Ensure the map has height to be visible */
 #map {
-    height: 400px; /* Default height */
+    height: 400px; 
     width: 100%;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Media query for slightly larger screens if needed, but the main goal is mobile */
 @media (min-width: 480px) {
     #map {
-        height: 500px; /* Slightly taller on larger phones/tablets */
+        height: 500px; 
     }
 }
